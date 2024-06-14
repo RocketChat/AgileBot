@@ -47,14 +47,14 @@ export class ExecuteViewSubmitHandler {
         const agileMessage = view.state?.["agileMessage"]["agileMessage"] || "";
         const selectDays = view.state?.["selectDays"]["selectDays"] || "";
         const time = view.state?.["agileTime"]["agileTime"] || "";
-
+        
         await sendNotification(
             this.read,
             this.modify,
             user,
             room,
-            "Saved successfully",
-        );
+            `**Settings saved successfully.** \n Selected days: ${selectDays} \n Time: ${time} UTC`
+        );        
 
         await storeOrUpdateData(this.persistence, this.read, roomId, "agile_message", agileMessage);
         await storeOrUpdateData(this.persistence, this.read, roomId, "agile_days", selectDays);

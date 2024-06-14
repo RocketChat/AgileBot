@@ -5,11 +5,11 @@
     "iconFile": "icon.png",
     "author": {
         "name": "Hardik Bhatia",
-        "homepage": "portfolio-hardikbhatia777.vercel.app",
-        "support": "linkedin.com/bhatia-hardik"
+        "homepage": "https://github.com/hardikbhatia777",
+        "support": "https://github.com/hardikbhatia777"
     },
     "name": "Agile Bot",
-    "nameSlug": "agile-bot",
+    "nameSlug": "agile",
     "classFile": "AgileBotApp.ts",
     "description": "Agile Bot GSoC '24",
     "permissions": [
