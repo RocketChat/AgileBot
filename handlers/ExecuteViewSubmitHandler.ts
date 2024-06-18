@@ -6,10 +6,10 @@ import {
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
 import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
-import { AgileBotApp } from "../../AgileBotApp";
-import { sendNotification } from "../../lib/agile-settings/messages";
-import { storeOrUpdateData, removeAllData } from "../../modals/agile-settings/AgileModal";
-import { getInteractionRoomData } from "../../lib/agile-settings/roomInteraction";
+import { AgileBotApp } from "../AgileBotApp";
+import { sendNotification } from "../lib/messages";
+import { storeOrUpdateData, removeAllData } from "../modals/agile-settings/AgileModal";
+import { getInteractionRoomData } from "../lib/roomInteraction";
 
 export class ExecuteViewSubmitHandler {
     constructor(

@@ -9,7 +9,7 @@ import {
     SlashCommandContext,
 } from "@rocket.chat/apps-engine/definition/slashcommands";
 import { AgileBotApp } from "../AgileBotApp";
-import { CommandUtility } from "../lib/agile-settings/commandUtility";
+import { CommandUtility } from "../lib/commandUtility";
 
 export class AgileSettings implements ISlashCommand {
     public constructor(private readonly app: AgileBotApp) {}

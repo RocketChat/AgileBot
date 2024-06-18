@@ -14,8 +14,8 @@ import { AgileSettings } from "./commands/AgileSettings";
 import { IPersistence, IModify } from "@rocket.chat/apps-engine/definition/accessors";
 import { IUIKitResponse } from "@rocket.chat/apps-engine/definition/uikit";
 import { UIKitBlockInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
-import { ExecuteBlockActionHandler } from "./handlers/agile-settings/ExecuteBlockActionHandler";
-import { ExecuteViewSubmitHandler } from "./handlers/agile-settings/ExecuteViewSubmitHandler";
+import { ExecuteBlockActionHandler } from "./handlers/ExecuteBlockActionHandler";
+import { ExecuteViewSubmitHandler } from "./handlers/ExecuteViewSubmitHandler";
 import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
 
 export class AgileBotApp extends App {

@@ -7,10 +7,10 @@ import {
 import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
 import { SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
-import { AgileBotApp } from "../../AgileBotApp";
-import { ExecutorProps } from "../../definitions/agile-settings/ExecutorProps";
+import { AgileBotApp } from "../AgileBotApp";
+import { ExecutorProps } from "../definitions/agile-settings/ExecutorProps";
 
-import { AgileModal } from "../../modals/agile-settings/AgileModal";
+import { AgileModal } from "../modals/agile-settings/AgileModal";
 
 export class CommandUtility {
     sender: IUser;

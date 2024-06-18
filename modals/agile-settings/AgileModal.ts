@@ -10,11 +10,12 @@ import { IUIKitModalViewParam } from "@rocket.chat/apps-engine/definition/uikit/
 import { TextObjectType } from "@rocket.chat/apps-engine/definition/uikit/blocks";
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
 import { IAgileSettingsPersistenceData } from "../../definitions/agile-settings/ExecutorProps";
+import { getInteractionRoomData, storeInteractionRoomData } from "../../lib/roomInteraction";
 
 export async function storeOrUpdateData(persistence: IPersistence, read: IRead, roomId: string, key: string, data: string): Promise<void> {
     const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, roomId);
     const existingData = await read.getPersistenceReader().readByAssociation(assoc);
-    
+
     if (existingData && existingData.length > 0) {
         const storedData = existingData[0];
         storedData[key] = data; 
@@ -65,16 +66,23 @@ export async function AgileModal({
 
         if (room?.id) {
             roomId = room.id;
+            await storeInteractionRoomData(persistence, user.id, roomId);
+        } else {
+            roomId = (
+                await getInteractionRoomData(
+                    read.getPersistenceReader(),
+                    user.id
+                )
+            ).roomId;
+        }
+        const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, roomId);
+        const data = (await read.getPersistenceReader().readByAssociation(assoc)) as IAgileSettingsPersistenceData[];
+        console.log(data);
 
-            const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, room.id);
-            const data = (await read.getPersistenceReader().readByAssociation(assoc)) as IAgileSettingsPersistenceData[];
-            console.log(data);
-            
-            if (data && data.length > 0) {
-                agileMessage = data[0].agile_message;
-                agileTime = data[0].agile_time;
-                agileDays = data[0].agile_days;
-            }
+        if (data && data.length > 0) {
+            agileMessage = data[0].agile_message;
+            agileTime = data[0].agile_time;
+            agileDays = data[0].agile_days;
         }
     }
 
