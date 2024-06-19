@@ -4,8 +4,8 @@ import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashco
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { AgileBotApp } from '../AgileBotApp';
 import { ExecutorProps } from '../definitions/agile-settings/ExecutorProps';
-
 import { AgileModal } from '../modals/agile-settings/AgileModal';
+import { MeetingReminderModal } from '../modals/meeting-reminder/MeetingReminderModal';
 
 export class CommandUtility {
 	sender: IUser;
@@ -30,11 +30,26 @@ export class CommandUtility {
 		this.app = props.app;
 	}
 
-	public async resolveCommand() {
+	public async openAgileSettings() {
 		const triggerId = this.context.getTriggerId() as string;
 		const user = this.context.getSender();
 
 		const contextualbarBlocks = await AgileModal({
+			modify: this.modify,
+			read: this.read,
+			persistence: this.persistence,
+			http: this.http,
+			slashCommandContext: this.context,
+			uiKitContext: undefined,
+		});
+		await this.modify.getUiController().openModalView(contextualbarBlocks, { triggerId }, user);
+	}
+
+	public async openMeetingReminderModal() {
+		const triggerId = this.context.getTriggerId() as string;
+		const user = this.context.getSender();
+
+		const contextualbarBlocks = await MeetingReminderModal({
 			modify: this.modify,
 			read: this.read,
 			persistence: this.persistence,

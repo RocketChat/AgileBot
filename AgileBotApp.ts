@@ -11,6 +11,7 @@ import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { SummarizeCommand } from './commands/Summarize';
 import { ThreadInit } from './commands/Thread';
 import { AgileSettings } from './commands/AgileSettings';
+import { MeetingReminder } from './commands/Meeting';
 import { IPersistence, IModify } from '@rocket.chat/apps-engine/definition/accessors';
 import { IUIKitResponse } from '@rocket.chat/apps-engine/definition/uikit';
 import { UIKitBlockInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
@@ -49,5 +50,6 @@ export class AgileBotApp extends App {
 		configuration.slashCommands.provideSlashCommand(new SummarizeCommand());
 		configuration.slashCommands.provideSlashCommand(new ThreadInit());
 		configuration.slashCommands.provideSlashCommand(new AgileSettings(this));
+		configuration.slashCommands.provideSlashCommand(new MeetingReminder(this));
 	}
 }

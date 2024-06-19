@@ -7,7 +7,7 @@ import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket
 import { IAgileSettingsPersistenceData } from '../../definitions/agile-settings/ExecutorProps';
 import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/roomInteraction';
 
-export async function AgileModal({
+export async function MeetingReminderModal({
 	modify,
 	read,
 	persistence,
@@ -22,31 +22,6 @@ export async function AgileModal({
 	slashCommandContext?: SlashCommandContext;
 	uiKitContext?: UIKitInteractionContext;
 }): Promise<IUIKitModalViewParam> {
-	const room = slashCommandContext?.getRoom() || uiKitContext?.getInteractionData().room;
-	const user = slashCommandContext?.getSender() || uiKitContext?.getInteractionData().user;
-
-	let agileMessage = '';
-	let agileTime = '';
-	let agileDays: string[] = [];
-
-	if (user?.id) {
-		let roomId: string;
-
-		if (room?.id) {
-			roomId = room.id;
-			await storeInteractionRoomData(persistence, user.id, roomId);
-		} else {
-			roomId = (await getInteractionRoomData(read.getPersistenceReader(), user.id)).roomId;
-		}
-		const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, roomId);
-		const data = (await read.getPersistenceReader().readByAssociation(assoc)) as IAgileSettingsPersistenceData[];
-
-		if (data && data.length > 0) {
-			agileMessage = data[0].agile_message;
-			agileTime = data[0].agile_time;
-			agileDays = data[0].agile_days;
-		}
-	}
 
 	const blocks = modify.getCreator().getBlockBuilder();
 
@@ -58,9 +33,8 @@ export async function AgileModal({
 		element: blocks.newPlainTextInputElement({
 			actionId: 'agileMessage',
 			multiline: true,
-			initialValue: agileMessage,
 			placeholder: {
-				text: 'Post all your updates in this thread :typing:',
+				text: '',
 				type: TextObjectType.PLAINTEXT,
 			},
 		}),
@@ -74,7 +48,6 @@ export async function AgileModal({
 		},
 		element: blocks.newMultiStaticElement({
 			actionId: 'selectDays',
-			initialValue: agileDays,
 			options: [
 				{
 					value: 'monday',
@@ -144,7 +117,6 @@ export async function AgileModal({
 		},
 		element: blocks.newPlainTextInputElement({
 			actionId: 'agileTime',
-			initialValue: agileTime,
 			placeholder: {
 				text: '24-hour format',
 				type: TextObjectType.PLAINTEXT,
@@ -154,7 +126,7 @@ export async function AgileModal({
 	});
 
 	return {
-		id: 'promptModalId',
+		id: 'meetingModalId',
 		title: blocks.newPlainTextObject('Agile Settings'),
 		submit: blocks.newButtonElement({
 			text: blocks.newPlainTextObject('Submit'),
