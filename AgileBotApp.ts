@@ -1,10 +1,4 @@
-import {
-	IAppAccessors,
-	IConfigurationExtend,
-	IHttp,
-	ILogger,
-	IRead,
-} from '@rocket.chat/apps-engine/definition/accessors';
+import { IAppAccessors, IConfigurationExtend, IHttp, ILogger, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { App } from '@rocket.chat/apps-engine/definition/App';
 import { IAppInfo } from '@rocket.chat/apps-engine/definition/metadata';
 import { SummarizeCommand } from './commands/Summarize';

@@ -3,6 +3,7 @@ import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashco
 import { UIKitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionContext';
 import { IUIKitModalViewParam } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks';
+import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/roomInteraction';
 
 export async function MeetingReminderModal({
 	modify,
@@ -19,6 +20,20 @@ export async function MeetingReminderModal({
 	slashCommandContext?: SlashCommandContext;
 	uiKitContext?: UIKitInteractionContext;
 }): Promise<IUIKitModalViewParam> {
+	const room = slashCommandContext?.getRoom() || uiKitContext?.getInteractionData().room;
+	const user = slashCommandContext?.getSender() || uiKitContext?.getInteractionData().user;
+
+	if (user?.id) {
+		let roomId: string;
+
+		if (room?.id) {
+			roomId = room.id;
+			await storeInteractionRoomData(persistence, user.id, roomId);
+		} else {
+			roomId = (await getInteractionRoomData(read.getPersistenceReader(), user.id)).roomId;
+		}
+	}
+
 	const blocks = modify.getCreator().getBlockBuilder();
 
 	blocks.addInputBlock({

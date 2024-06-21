@@ -5,7 +5,6 @@ import { AgileBotApp } from '../AgileBotApp';
 import { sendNotification } from '../lib/messages';
 import { storeOrUpdateData, removeAllData } from '../lib/PersistenceMethods';
 import { getInteractionRoomData } from '../lib/roomInteraction';
-import { sendMessageToRoom } from '../lib/sendMessageToRoom';
 
 export class ExecuteViewSubmitHandler {
 	constructor(
@@ -32,7 +31,7 @@ export class ExecuteViewSubmitHandler {
 			case 'promptModalId':
 				return await this.handlePromptModal(context);
 			case 'meetingModalId':
-				return this.handleMeetingModal(context);
+				return await this.handleMeetingModal(context);
 			default:
 				return {
 					success: false,
@@ -55,6 +54,43 @@ export class ExecuteViewSubmitHandler {
 		}
 
 		return { room, error: null };
+	}
+
+	private async handleMeetingModal(context: UIKitViewSubmitInteractionContext) {
+		const { user, view } = context.getInteractionData();
+
+		const { room, error } = await this.getRoom(user.id);
+		if (error || !room) {
+			return {
+				success: false,
+				error: error || 'Room not found',
+			};
+		}
+
+		const author = await this.read.getUserReader().getAppUser();
+
+		const meetingLink = view.state?.['meetingLink']['meetingLink'] || '';
+
+		const messageText = `Please join this: ${meetingLink}`;
+
+		const task = {
+			id: 'meeting-reminder',
+			when: '3 seconds',
+			data: {
+				room: room,
+				sender: author ?? user,
+				message: messageText,
+			},
+		};
+
+		await sendNotification(this.read, this.modify, user, room, `Scheduled meeting`);
+
+		await this.modify.getScheduler().scheduleOnce(task);
+
+		return {
+			success: true,
+			...view,
+		};
 	}
 
 	private async handlePromptModal(context: UIKitViewSubmitInteractionContext) {
@@ -84,41 +120,6 @@ export class ExecuteViewSubmitHandler {
 			`**Settings saved successfully.** \n Selected days: ${selectDays} \n Time: ${time} UTC`,
 		);
 
-		return {
-			success: true,
-			...view,
-		};
-	}
-
-	private async handleMeetingModal(context: UIKitViewSubmitInteractionContext) {
-		const { user, view } = context.getInteractionData();
-
-		const { room, error } = await this.getRoom(user.id);
-		if (error || !room) {
-			return {
-				success: false,
-				error: error || 'Room not found',
-			};
-		}
-
-        const author = await this.read.getUserReader().getAppUser();
-
-		const meetingLink = view.state?.['meetingLink']['meetingLink'] || '';
-
-		const messageText = `Please join this: ${meetingLink}`;
-
-        const task = {
-            id: 'meeting-reminder',
-            when: '10 seconds',
-			data: {
-				room: room,
-				sender: author ?? user,
-				message: messageText
-			}
-        };
-
-        await this.modify.getScheduler().scheduleOnce(task);
-        
 		return {
 			success: true,
 			...view,

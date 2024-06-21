@@ -30,11 +30,11 @@ export class CommandUtility {
 		this.app = props.app;
 	}
 
-	public async openAgileSettings() {
+	private async openModal(modalCreator: Function) {
 		const triggerId = this.context.getTriggerId() as string;
 		const user = this.context.getSender();
 
-		const contextualbarBlocks = await AgileModal({
+		const contextualbarBlocks = await modalCreator({
 			modify: this.modify,
 			read: this.read,
 			persistence: this.persistence,
@@ -45,18 +45,11 @@ export class CommandUtility {
 		await this.modify.getUiController().openModalView(contextualbarBlocks, { triggerId }, user);
 	}
 
-	public async openMeetingReminderModal() {
-		const triggerId = this.context.getTriggerId() as string;
-		const user = this.context.getSender();
+	public async openAgileSettings() {
+		await this.openModal(AgileModal);
+	}
 
-		const contextualbarBlocks = await MeetingReminderModal({
-			modify: this.modify,
-			read: this.read,
-			persistence: this.persistence,
-			http: this.http,
-			slashCommandContext: this.context,
-			uiKitContext: undefined,
-		});
-		await this.modify.getUiController().openModalView(contextualbarBlocks, { triggerId }, user);
+	public async openMeetingReminderModal() {
+		await this.openModal(MeetingReminderModal);
 	}
 }
