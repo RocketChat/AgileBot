@@ -23,8 +23,6 @@ export class ThreadInit implements ISlashCommand {
 			message = data[0].agile_message;
 		}
 
-		console.log(message);
-
 		await sendMessageToRoom(room, modify, user ?? author, message);
 	}
 }

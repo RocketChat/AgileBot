@@ -6,6 +6,7 @@ import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
 import { IAgileSettingsPersistenceData } from '../../definitions/agile-settings/ExecutorProps';
 import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/roomInteraction';
+import { t } from '../../i18n/translation';
 
 export async function AgileModal({
 	modify,
@@ -52,7 +53,7 @@ export async function AgileModal({
 
 	blocks.addInputBlock({
 		label: {
-			text: 'Enter Message',
+			text: t('agile_message_title'),
 			type: TextObjectType.PLAINTEXT,
 		},
 		element: blocks.newPlainTextInputElement({
@@ -60,7 +61,7 @@ export async function AgileModal({
 			multiline: true,
 			initialValue: agileMessage,
 			placeholder: {
-				text: 'Post all your updates in this thread :typing:',
+				text: t('agile_message_placeholder'),
 				type: TextObjectType.PLAINTEXT,
 			},
 		}),
@@ -69,7 +70,7 @@ export async function AgileModal({
 
 	blocks.addInputBlock({
 		label: {
-			text: 'Select Days',
+			text: t('agile_select_days_title'),
 			type: TextObjectType.PLAINTEXT,
 		},
 		element: blocks.newMultiStaticElement({
@@ -139,7 +140,7 @@ export async function AgileModal({
 
 	blocks.addInputBlock({
 		label: {
-			text: 'Enter time',
+			text: t('agile_time_title'),
 			type: TextObjectType.PLAINTEXT,
 		},
 		element: blocks.newPlainTextInputElement({
@@ -155,9 +156,9 @@ export async function AgileModal({
 
 	return {
 		id: 'promptModalId',
-		title: blocks.newPlainTextObject('Agile Settings'),
+		title: blocks.newPlainTextObject(t('agile_modal_title')),
 		submit: blocks.newButtonElement({
-			text: blocks.newPlainTextObject('Submit'),
+			text: blocks.newPlainTextObject(t('Submit')),
 		}),
 		blocks: blocks.getBlocks(),
 	};

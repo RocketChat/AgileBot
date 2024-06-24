@@ -1,10 +1,9 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
-import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { AgileBotApp } from '../AgileBotApp';
 import { sendNotification } from '../lib/messages';
 import { storeOrUpdateData, removeAllData } from '../lib/PersistenceMethods';
-import { getInteractionRoomData } from '../lib/roomInteraction';
+import { getRoom } from '../lib/roomInteraction';
 
 export class ExecuteViewSubmitHandler {
 	constructor(
@@ -40,63 +39,62 @@ export class ExecuteViewSubmitHandler {
 		}
 	}
 
-	private async getRoom(userId: string): Promise<{ room: IRoom | null; error: string | null }> {
-		const { roomId } = await getInteractionRoomData(this.read.getPersistenceReader(), userId);
-
-		if (!roomId) {
-			return { room: null, error: 'No room to send a message' };
-		}
-
-		const room = (await this.read.getRoomReader().getById(roomId)) as IRoom;
-
-		if (!room) {
-			return { room: null, error: 'Room not found' };
-		}
-
-		return { room, error: null };
-	}
-
 	private async handleMeetingModal(context: UIKitViewSubmitInteractionContext) {
 		const { user, view } = context.getInteractionData();
-
-		const { room, error } = await this.getRoom(user.id);
+		
+		const { room, error } = await getRoom(this.read, user.id);
 		if (error || !room) {
 			return {
 				success: false,
 				error: error || 'Room not found',
 			};
 		}
-
+	
 		const author = await this.read.getUserReader().getAppUser();
-
+		
 		const meetingLink = view.state?.['meetingLink']['meetingLink'] || '';
-
-		const messageText = `Please join this: ${meetingLink}`;
-
+		const meetingTitle = view.state?.['meetingTitle']['meetingTitle'] || '';
+		const meetingTimeStr = view.state?.['meetingTime']['meetingTime'] || '';
+		const minutesBeforeStr = view.state?.['minutesBefore']['minutesBefore'] || '0';
+		
+		const meetingTime = parseInt(meetingTimeStr, 10);
+		const meetingHours = Math.floor(meetingTime / 100);
+		const meetingMinutes = meetingTime % 100;
+		const minutesBefore = parseInt(minutesBeforeStr, 10);
+		
+		const a = new Date()
+		const b = new Date().setHours(meetingHours, meetingMinutes, 0, 0);
+		const c = new Date();
+		c.setTime(b);
+		
+		const timeLeft = Math.floor((b- a.getTime())/1000 - minutesBefore*60);
+		
+		const messageText = `Please join the meeting: ${meetingLink}\nTitle: ${meetingTitle}`;
+		
 		const task = {
 			id: 'meeting-reminder',
-			when: '3 seconds',
+			when: `${timeLeft} seconds`,
 			data: {
 				room: room,
 				sender: author ?? user,
 				message: messageText,
 			},
 		};
-
-		await sendNotification(this.read, this.modify, user, room, `Scheduled meeting`);
-
+		
+		await sendNotification(this.read, this.modify, user, room, `Scheduled meeting reminder ${meetingTimeStr}, ${a}`);
+	
 		await this.modify.getScheduler().scheduleOnce(task);
-
+		
 		return {
 			success: true,
 			...view,
 		};
-	}
+	}	
 
 	private async handlePromptModal(context: UIKitViewSubmitInteractionContext) {
 		const { user, view } = context.getInteractionData();
 
-		const { room, error } = await this.getRoom(user.id);
+		const { room, error } = await getRoom(this.read, user.id);
 		if (error || !room) {
 			return {
 				success: false,
