@@ -4,15 +4,15 @@ import { UIKitInteractionContext } from '@rocket.chat/apps-engine/definition/uik
 import { IUIKitModalViewParam } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks';
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
-import { IAgileSettingsPersistenceData } from '../../definitions/agile-settings/ExecutorProps';
-import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/roomInteraction';
+import { IAgileSettingsPersistenceData } from '../../definitions/ExecutorProps';
+import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/RoomInteraction';
+import { Modals } from '../../definitions/ModalsEnum';
 import { t } from '../../i18n/translation';
 
 export async function AgileModal({
 	modify,
 	read,
 	persistence,
-	http,
 	slashCommandContext,
 	uiKitContext,
 }: {
@@ -155,10 +155,10 @@ export async function AgileModal({
 	});
 
 	return {
-		id: 'promptModalId',
+		id: Modals.AgileSettings,
 		title: blocks.newPlainTextObject(t('agile_modal_title')),
 		submit: blocks.newButtonElement({
-			text: blocks.newPlainTextObject(t('Submit')),
+			text: blocks.newPlainTextObject(t('submit')),
 		}),
 		blocks: blocks.getBlocks(),
 	};

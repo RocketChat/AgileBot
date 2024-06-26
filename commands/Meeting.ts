@@ -1,7 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { AgileBotApp } from '../AgileBotApp';
-import { CommandUtility } from '../lib/commandUtility';
+import { CommandUtility } from '../lib/CommandUtility';
 
 export class MeetingReminder implements ISlashCommand {
 	public constructor(private readonly app: AgileBotApp) {}

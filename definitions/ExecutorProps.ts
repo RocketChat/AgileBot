@@ -2,7 +2,7 @@ import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/de
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
-import { AgileBotApp } from '../../AgileBotApp';
+import { AgileBotApp } from '../AgileBotApp';
 
 export interface ExecutorProps {
 	sender: IUser;

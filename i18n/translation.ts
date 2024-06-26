@@ -1,4 +1,4 @@
-import { en } from "./locales/en";
+import { en } from './locales/en';
 
 export const t = (key: any) => {
 	const translation = en[key];

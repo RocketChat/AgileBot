@@ -3,9 +3,8 @@ import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { AgileBotApp } from '../AgileBotApp';
-import { ExecutorProps } from '../definitions/agile-settings/ExecutorProps';
-import { AgileModal } from '../modals/agile-settings/AgileModal';
-import { MeetingReminderModal } from '../modals/meeting-reminder/MeetingReminderModal';
+import { ExecutorProps } from '../definitions/ExecutorProps';
+import { MeetingReminderModal, AgileModal } from '../modals/index';
 
 export class CommandUtility {
 	sender: IUser;

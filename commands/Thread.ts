@@ -2,8 +2,8 @@ import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/de
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
-import { IAgileSettingsPersistenceData } from '../definitions/agile-settings/ExecutorProps';
-import { sendMessageToRoom } from '../lib/sendMessageToRoom';
+import { IAgileSettingsPersistenceData } from '../definitions/ExecutorProps';
+import { sendMessageToRoom } from '../lib/SendMessageToRoom';
 
 export class ThreadInit implements ISlashCommand {
 	public command = 'scrum';

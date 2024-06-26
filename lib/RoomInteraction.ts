@@ -14,7 +14,6 @@ export const getInteractionRoomData = async (persistenceRead: IPersistenceRead, 
 	return result && result.length ? result[0] : null;
 };
 
-
 export const getRoom = async (read: IRead, userId: string): Promise<{ room: IRoom | null; error: string | null }> => {
 	const { roomId } = await getInteractionRoomData(read.getPersistenceReader(), userId);
 
