@@ -1,9 +1,9 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
-import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
-import { IAgileSettingsPersistenceData } from '../definitions/agile-settings/ExecutorProps';
+import { IAgileSettingsPersistenceData } from '../definitions/ExecutorProps';
+import { sendMessageToRoom } from '../lib/SendMessageToRoom';
 
 export class ThreadInit implements ISlashCommand {
 	public command = 'scrum';
@@ -23,14 +23,6 @@ export class ThreadInit implements ISlashCommand {
 			message = data[0].agile_message;
 		}
 
-		await this.sendMessageToRoom(room, modify, user ?? author, message);
-	}
-
-	private async sendMessageToRoom(room: IRoom, modify: IModify, sender: IUser, message: string): Promise<void> {
-		const messageBuilder = modify.getCreator().startMessage();
-		messageBuilder.setText(message);
-		messageBuilder.setRoom(room);
-		messageBuilder.setSender(sender);
-		await modify.getCreator().finish(messageBuilder);
+		await sendMessageToRoom(room, modify, user ?? author, message);
 	}
 }

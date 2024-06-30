@@ -3,10 +3,10 @@ import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/def
 import { AgileBotApp } from '../AgileBotApp';
 import { CommandUtility } from '../lib/CommandUtility';
 
-export class AgileSettings implements ISlashCommand {
+export class MeetingReminder implements ISlashCommand {
 	public constructor(private readonly app: AgileBotApp) {}
-	public command = 'agile-settings';
-	public i18nDescription = 'settings';
+	public command = 'meeting-reminder';
+	public i18nDescription = 'meeting_reminder_description';
 	public providesPreview = false;
 	public i18nParamsExample = '';
 
@@ -37,6 +37,6 @@ export class AgileSettings implements ISlashCommand {
 			app: this.app,
 		});
 
-		commandUtility.openAgileSettings();
+		commandUtility.openMeetingReminderModal();
 	}
 }

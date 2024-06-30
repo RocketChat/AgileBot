@@ -56,12 +56,14 @@ export class SummarizeCommand implements ISlashCommand {
 
                 Briefly summarize the following messages only, separated by double slashes (//): ${messages}
                 
-                Mention these people who haven't posted an update. If empty, say "Everyone posted an update!": ${notPosted}
-                `,
+				Name the people who haven't posted an update as well, separated by double slashes: ${notPosted}
+				`,
 				},
 			],
 			temperature: 0,
 		};
+
+		const reply = body + notPosted;
 
 		const response = await http.post(url + '/chat/completions', {
 			headers: {
@@ -120,7 +122,7 @@ export class SummarizeCommand implements ISlashCommand {
 
 		const usersNotPosted = usernamesInRoom.filter((name) => !usersWhoPosted.has(name));
 
-		return usersNotPosted.join('--');
+		return usersNotPosted.join(' // ');
 	}
 
 	private async sendMessage(room: IRoom, textMessage: string, author: IUser, modify: IModify, threadId?: string): Promise<string> {

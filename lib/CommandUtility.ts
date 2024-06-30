@@ -3,9 +3,8 @@ import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { AgileBotApp } from '../AgileBotApp';
-import { ExecutorProps } from '../definitions/agile-settings/ExecutorProps';
-
-import { AgileModal } from '../modals/agile-settings/AgileModal';
+import { ExecutorProps } from '../definitions/ExecutorProps';
+import { MeetingReminderModal, AgileModal } from '../modals/index';
 
 export class CommandUtility {
 	sender: IUser;
@@ -30,11 +29,11 @@ export class CommandUtility {
 		this.app = props.app;
 	}
 
-	public async resolveCommand() {
+	private async openModal(modalCreator: Function) {
 		const triggerId = this.context.getTriggerId() as string;
 		const user = this.context.getSender();
 
-		const contextualbarBlocks = await AgileModal({
+		const contextualbarBlocks = await modalCreator({
 			modify: this.modify,
 			read: this.read,
 			persistence: this.persistence,
@@ -43,5 +42,13 @@ export class CommandUtility {
 			uiKitContext: undefined,
 		});
 		await this.modify.getUiController().openModalView(contextualbarBlocks, { triggerId }, user);
+	}
+
+	public async openAgileSettings() {
+		await this.openModal(AgileModal);
+	}
+
+	public async openMeetingReminderModal() {
+		await this.openModal(MeetingReminderModal);
 	}
 }
