@@ -1,60 +1,60 @@
 {
-	"id": "a056c6fd-b2ca-4db8-8c54-0f206a4bf7ae",
-	"version": "0.0.1",
-	"requiredApiVersion": "^1.19.0",
-	"iconFile": "icon.png",
-	"author": {
-		"name": "Hardik Bhatia",
-		"homepage": "https://github.com/hardikbhatia777",
-		"support": "https://github.com/hardikbhatia777"
-	},
-	"name": "Agile Bot",
-	"nameSlug": "agile",
-	"classFile": "AgileBotApp.ts",
-	"description": "Agile Bot GSoC '24",
-	"permissions": [
-		{
-			"name": "user.read"
-		},
-		{
-			"name": "user.write"
-		},
-		{
-			"name": "ui.interact"
-		},
-		{
-			"name": "room.read"
-		},
-		{
-			"name": "room.write"
-		},
-		{
-			"name": "message.read"
-		},
-		{
-			"name": "message.write"
-		},
-		{
-			"name": "slashcommand"
-		},
-		{
-			"name": "api"
-		},
-		{
-			"name": "networking"
-		},
-		{
-			"name": "threads.read"
-		},
-		{
-			"name": "ui.registerButtons"
-		},
-		{
-			"name": "persistence"
-		},
-		{
-			"name": "scheduler"
-		}
-	],
-	"implements": []
+    "id": "a056c6fd-b2ca-4db8-8c54-0f206a4bf7ae",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.19.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Hardik Bhatia",
+        "homepage": "https://github.com/hardikbhatia777",
+        "support": "https://github.com/hardikbhatia777"
+    },
+    "name": "Agile Bot",
+    "nameSlug": "agile",
+    "classFile": "AgileBotApp.ts",
+    "description": "Agile Bot GSoC '24",
+    "permissions": [
+        {
+            "name": "user.read"
+        },
+        {
+            "name": "user.write"
+        },
+        {
+            "name": "ui.interact"
+        },
+        {
+            "name": "room.read"
+        },
+        {
+            "name": "room.write"
+        },
+        {
+            "name": "message.read"
+        },
+        {
+            "name": "message.write"
+        },
+        {
+            "name": "slashcommand"
+        },
+        {
+            "name": "api"
+        },
+        {
+            "name": "networking"
+        },
+        {
+            "name": "threads.read"
+        },
+        {
+            "name": "ui.registerButtons"
+        },
+        {
+            "name": "persistence"
+        },
+        {
+            "name": "scheduler"
+        }
+    ],
+    "implements": []
 }
