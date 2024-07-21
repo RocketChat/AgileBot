@@ -96,7 +96,10 @@ export class QuickPoll implements ISlashCommand {
             .setRoom(room)
             .setBlocks(blockBuilder.getBlocks());
 
-        await modify.getCreator().finish(builder);
+        const messageId = await modify.getCreator().finish(builder);
+
+        pollData.message = messageId;
+        await persis.updateByAssociation(assoc, pollData);
 
         const when = new Date();
         when.setSeconds(when.getSeconds() + parseInt(time, 10));
