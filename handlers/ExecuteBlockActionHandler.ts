@@ -3,7 +3,10 @@ import { AgileBotApp } from '../AgileBotApp';
 import { IUIKitResponse, UIKitBlockInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 import { sendNotification } from '../lib/Messages';
-import { IPollData } from '../definitions/PollProps';
+import { IPollData, Poll } from '../definitions/PollProps';
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
+import { t } from '../i18n/translation';
 
 export class ExecuteBlockActionHandler {
 	constructor(
@@ -15,19 +18,21 @@ export class ExecuteBlockActionHandler {
 	) {}
 
 	public async run(context: UIKitBlockInteractionContext): Promise<IUIKitResponse> {
-		const { actionId, user, container, blockId, value, triggerId, room } = context.getInteractionData();
-		console.log(user);
-		console.log(room);
+		const { actionId, user, value, room } = context.getInteractionData();
+
+        if (!room || !value){
+            return {
+                success: false,
+            };
+        }
 
 		switch (actionId) {
-			case 'quickpoll_yes':
+			case Poll.PollYes:
 				await this.handleQuickPollYes(user, room, value);
 				break;
-			case 'quickpoll_no':
+			case Poll.PollNo:
 				await this.handleQuickPollNo(user, room, value);
 				break;
-			default:
-				console.log('Default');
 		}
 
 		return {
@@ -35,7 +40,7 @@ export class ExecuteBlockActionHandler {
 		};
 	}
 
-	private async handleQuickPollYes(user, room, value) {
+	private async handleQuickPollYes(user: IUser, room: IRoom, value: string) {
 		if (room) {
 			const responseStored = await this.storePollResponse(value, 'yes', user.name);
 			await sendNotification(
@@ -43,12 +48,12 @@ export class ExecuteBlockActionHandler {
 				this.modify,
 				user,
 				room,
-				responseStored ? `Your response has been recorded as YES.` : `This poll has already ended.`,
+				responseStored ? t('poll_response_recorded_yes') : t('poll_already_ended'),
 			);
 		}
 	}
 
-	private async handleQuickPollNo(user, room, value) {
+	private async handleQuickPollNo(user: IUser, room: IRoom, value: string) {
 		if (room) {
 			const responseStored = await this.storePollResponse(value, 'no', user.name);
 			await sendNotification(
@@ -56,7 +61,7 @@ export class ExecuteBlockActionHandler {
 				this.modify,
 				user,
 				room,
-				responseStored ? `Your response has been recorded as NO.` : `This poll has already ended.`,
+				responseStored ? t('poll_response_recorded_no') : t('poll_already_ended'),
 			);
 		}
 	}
@@ -76,8 +81,6 @@ export class ExecuteBlockActionHandler {
 		if (!pollData.responses[response].includes(userName)) {
 			pollData.responses[response].push(userName);
 		}
-
-		console.log(pollData);
 
 		await this.persistence.updateByAssociation(assoc, pollData);
 		return true;
