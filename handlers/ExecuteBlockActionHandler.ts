@@ -37,36 +37,36 @@ export class ExecuteBlockActionHandler {
 
 	private async handleQuickPollYes(user, room, value) {
 		if (room) {
+			const responseStored = await this.storePollResponse(value, 'yes', user.name);
 			await sendNotification(
 				this.read,
 				this.modify,
 				user,
 				room,
-				`${user.name} replied - Yes in room ${room.displayName}. Poll ID: ${value}`,
+				responseStored ? `Your response has been recorded as YES.` : `This poll has already ended.`,
 			);
-			await this.storePollResponse(value, 'yes', user.name);
 		}
 	}
 
 	private async handleQuickPollNo(user, room, value) {
 		if (room) {
+			const responseStored = await this.storePollResponse(value, 'no', user.name);
 			await sendNotification(
 				this.read,
 				this.modify,
 				user,
 				room,
-				`${user.name} replied - No in room ${room.displayName}. Poll ID: ${value}`,
+				responseStored ? `Your response has been recorded as NO.` : `This poll has already ended.`,
 			);
-			await this.storePollResponse(value, 'no', user.name);
 		}
 	}
 
-	private async storePollResponse(uuid: string, response: string, userName: string) {
+	private async storePollResponse(uuid: string, response: string, userName: string): Promise<boolean> {
 		const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, uuid);
 		const [pollData] = (await this.read.getPersistenceReader().readByAssociation(assoc)) as IPollData[];
 		if (!pollData) {
 			console.error(`Poll with ID ${uuid} not found`);
-			return;
+			return false;
 		}
 
 		const otherResponse = response === 'yes' ? 'no' : 'yes';
@@ -80,5 +80,6 @@ export class ExecuteBlockActionHandler {
 		console.log(pollData);
 
 		await this.persistence.updateByAssociation(assoc, pollData);
+		return true;
 	}
 }

@@ -3,6 +3,7 @@ import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 import { sendMessageToRoom } from '../lib/SendMessageToRoom';
+import { IPollData } from '../definitions/PollProps';
 
 function generateUUID(): string {
     function randomHex(size: number): string {
@@ -16,18 +17,6 @@ function generateUUID(): string {
         ((Math.floor(Math.random() * 4) + 8).toString(16)) + randomHex(3),
         randomHex(12)
     ].join('-');
-}
-
-interface PollData {
-    time: string;
-    message: string;
-    uuid: string;
-    roomId: string;
-    creatorName: string;
-    responses: {
-        yes: string[];
-        no: string[];
-    };
 }
 
 export class QuickPoll implements ISlashCommand {
@@ -53,12 +42,15 @@ export class QuickPoll implements ISlashCommand {
 
         const uuid = generateUUID();
 
-        const pollData: PollData = {
+        const pollData: IPollData = {
             time,
             message,
             uuid,
             roomId: room.id,
             creatorName: author.name,
+            creatorId: author.id,
+            pollMessage: message,
+            messageId: '',
             responses: {
                 yes: [],
                 no: []
@@ -71,7 +63,7 @@ export class QuickPoll implements ISlashCommand {
         const blockBuilder = modify.getCreator().getBlockBuilder();
 
         blockBuilder.addSectionBlock({
-            text: blockBuilder.newMarkdownTextObject(`Time: ${time}\nMessage: ${message}\nUUID: ${uuid}\nCreated by: ${author.name}`),
+            text: blockBuilder.newMarkdownTextObject(`## Poll \n ${pollData.message} \n\n Created by: ${pollData.creatorName}`),
         });
 
         blockBuilder.addActionsBlock({

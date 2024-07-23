@@ -4,6 +4,8 @@ export interface IPollData {
     uuid: string;
     roomId: string;
     messageId: string;
+    pollMessage: string;
+    creatorId: string;
     creatorName: string;
     responses: {
         yes: string[];
