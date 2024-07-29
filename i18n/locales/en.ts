@@ -24,6 +24,8 @@ export const en = {
     poll_response_recorded_yes: 'Your response has been recorded as YES.',
     poll_response_recorded_no: 'Your response has been recorded as NO.',
     poll_already_ended: 'This poll has already ended.',
+    invalid_time_argument: 'Please enter an integer time argument above 0.',
+    time_argument_too_large: 'The time argument is too large. Please enter a smaller value (1 - 10000 minutes)',
     yes: 'Yes',
     no: 'No',
 };

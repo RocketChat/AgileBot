@@ -39,15 +39,15 @@ export class QuickPollProcessor implements IProcessor {
         }
 
         const channelSummaryText = `
-## Poll Results:
+### Poll Results:
 ${pollData.pollMessage}
 Created by: ${pollData.creatorName}
 
-## Verdict: ${summaryResult}
+### Verdict: ${summaryResult}
         `;
 
         const detailedStatsText = `
-## Detailed Poll Results:
+### Detailed Poll Results:
 ${pollData.pollMessage}
 
 Yes (${yesPercentage.toFixed(2)}%): ${pollData.responses.yes.join(', ')}
