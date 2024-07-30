@@ -58,17 +58,52 @@ export class ExecuteViewSubmitHandler {
 		const meetingTimeStr = view.state?.['meetingTime']['meetingTime'] || '';
 		const minutesBeforeStr = view.state?.['minutesBefore']['minutesBefore'] || '0';
 
+		// Validate meetingTimeStr
+		if (!/^\d{4}$/.test(meetingTimeStr)) {
+			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time format. Please use 24-hour format (HHMM).');
+			return {
+				success: false,
+				error: 'Invalid meeting time format. Please use 24-hour format (HHMM).',
+			};
+		}
+
 		const meetingTime = parseInt(meetingTimeStr, 10);
 		const meetingHours = Math.floor(meetingTime / 100);
 		const meetingMinutes = meetingTime % 100;
+
+		// Validate hours and minutes
+		if (meetingHours < 0 || meetingHours > 23 || meetingMinutes < 0 || meetingMinutes > 59) {
+			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time. Hours must be between 00 and 23 and minutes between 00 and 59.');
+			return {
+				success: false,
+				error: 'Invalid meeting time. Hours must be between 00 and 23 and minutes between 00 and 59.',
+			};
+		}
+
+		// Validate minutesBeforeStr
 		const minutesBefore = parseInt(minutesBeforeStr, 10);
+		if (isNaN(minutesBefore) || minutesBefore < 0) {
+			await sendNotification(this.read, this.modify, user, room, 'Invalid "minutes before" value. It must be a non-negative integer.');
+			return {
+				success: false,
+				error: 'Invalid "minutes before" value. It must be a non-negative integer.',
+			};
+		}
 
-		const a = new Date();
-		const b = new Date().setHours(meetingHours, meetingMinutes, 0, 0);
-		const c = new Date();
-		c.setTime(b);
+		const now = new Date();
+		const meetingDate = new Date();
+		meetingDate.setHours(meetingHours, meetingMinutes, 0, 0);
 
-		const timeLeft = Math.floor((b - a.getTime()) / 1000 - minutesBefore * 60);
+		const timeLeft = Math.floor((meetingDate.getTime() - now.getTime()) / 1000 - minutesBefore * 60);
+
+		// Check if timeLeft is negative
+		if (timeLeft < 0) {
+			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time. The meeting time must be in the future.');
+			return {
+				success: false,
+				error: 'Invalid meeting time. The meeting time must be in the future.',
+			};
+		}
 
 		const messageText = `Please join the meeting: ${meetingLink}\nTitle: ${meetingTitle}`;
 
@@ -82,7 +117,7 @@ export class ExecuteViewSubmitHandler {
 			},
 		};
 
-		await sendNotification(this.read, this.modify, user, room, `Scheduled meeting reminder ${meetingTimeStr}, ${a}`);
+		await sendNotification(this.read, this.modify, user, room, `Scheduled meeting reminder for ${meetingTimeStr}.`);
 
 		await this.modify.getScheduler().scheduleOnce(task);
 

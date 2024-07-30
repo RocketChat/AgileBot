@@ -9,7 +9,7 @@ export const en = {
 	meeting_title_placeholder: 'Enter the meeting title',
 	minutes_before_placeholder: 'Enter minutes to post reminder before meeting',
 	minutes_before_title: 'Enter minutes to post reminder before meeting',
-	meeting_modal_title: 'Meeting Modal Title',
+	meeting_modal_link: 'Meeting Link',
 	meeting_link_placeholder: 'Enter the meeting link',
 	meeting_title_label: 'Meeting Title',
 	meeting_time_label: 'Meeting time',
