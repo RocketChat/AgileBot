@@ -11,7 +11,9 @@ import { UIKitBlockInteractionContext } from '@rocket.chat/apps-engine/definitio
 import { ExecuteBlockActionHandler } from './handlers/ExecuteBlockActionHandler';
 import { ExecuteViewSubmitHandler } from './handlers/ExecuteViewSubmitHandler';
 import { UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
-import { MeetingReminderProcessor } from './lib/MeetingReminderProcessor';
+import { MeetingReminderProcessor } from './lib/processors/MeetingReminderProcessor';
+import { QuickPoll } from './commands/Poll';
+import { QuickPollProcessor } from './lib/processors/QuickPollProcessor';
 
 export class AgileBotApp extends App {
 	constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
@@ -45,7 +47,9 @@ export class AgileBotApp extends App {
 		configuration.slashCommands.provideSlashCommand(new ThreadInit());
 		configuration.slashCommands.provideSlashCommand(new AgileSettings(this));
 		configuration.slashCommands.provideSlashCommand(new MeetingReminder(this));
+		configuration.slashCommands.provideSlashCommand(new QuickPoll());
 
 		configuration.scheduler.registerProcessors([new MeetingReminderProcessor()]);
+		configuration.scheduler.registerProcessors([new QuickPollProcessor()]);
 	}
 }
