@@ -7,7 +7,7 @@ import { IUser } from '@rocket.chat/apps-engine/definition/users';
 export class SummarizeCommand implements ISlashCommand {
 	public command = 'summarize';
 	public i18nParamsExample = 'Thread report for Agile';
-	public i18nDescription = '';
+	public i18nDescription = 'agile_bot_command_summary';
 	public providesPreview = false;
 
 	public async executor(context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp): Promise<void> {
@@ -28,6 +28,7 @@ export class SummarizeCommand implements ISlashCommand {
 		const summary = await this.summarizeMessages(room, read, context.getSender(), http, messages, notPosted);
 
 		await this.sendMessage(room, summary, author ?? user, modify, threadId);
+		await this.sendNotPostedMessage(room, notPosted, author ?? user, modify, threadId);
 	}
 
 	private async summarizeMessages(
@@ -47,7 +48,7 @@ export class SummarizeCommand implements ISlashCommand {
 				{
 					role: 'system',
 					content: `You are an assistant designed to help summarize daily updates from engineers. Follow this format:
-                
+
                 ### (Name of engineer)
                 [Leave one line]
                     ** Progress **: [Brief summary of what was completed]
@@ -55,8 +56,6 @@ export class SummarizeCommand implements ISlashCommand {
                     ** Next Steps **: [Brief summary of planned tasks]
 
                 Briefly summarize the following messages only, separated by double slashes (//): ${messages}
-                
-				Name the people who haven't posted an update as well, separated by double slashes: ${notPosted}
 				`,
 				},
 			],
@@ -128,6 +127,24 @@ export class SummarizeCommand implements ISlashCommand {
 	private async sendMessage(room: IRoom, textMessage: string, author: IUser, modify: IModify, threadId?: string): Promise<string> {
 		const messageBuilder = modify.getCreator().startMessage({
 			text: textMessage,
+		} as IMessage);
+		messageBuilder.setRoom(room);
+		messageBuilder.setSender(author);
+		if (threadId) {
+			messageBuilder.setThreadId(threadId);
+		}
+		return modify.getCreator().finish(messageBuilder);
+	}
+
+	private async sendNotPostedMessage(room: IRoom, textMessage: string, author: IUser, modify: IModify, threadId?: string): Promise<string> {
+		let txt = '';
+		if (textMessage.length == 0) {
+			txt = 'Everyone posted an update!';
+		} else {
+			txt = `People who haven't posted an update: ${textMessage}`;
+		}
+		const messageBuilder = modify.getCreator().startMessage({
+			text: txt,
 		} as IMessage);
 		messageBuilder.setRoom(room);
 		messageBuilder.setSender(author);

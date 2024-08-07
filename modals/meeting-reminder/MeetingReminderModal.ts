@@ -38,6 +38,22 @@ export async function MeetingReminderModal({
 
 	const blocks = modify.getCreator().getBlockBuilder();
 
+	const now = new Date();
+	const options: Intl.DateTimeFormatOptions = {
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+		timeZoneName: 'short',
+	};
+	const currentTime = new Intl.DateTimeFormat('en-US', options).format(now);
+
+	blocks.addSectionBlock({
+		text: {
+			text: `*Current Time:* ${currentTime}`,
+			type: TextObjectType.MARKDOWN,
+		},
+	});
+
 	blocks.addInputBlock({
 		label: {
 			text: t('meeting_modal_title'),
