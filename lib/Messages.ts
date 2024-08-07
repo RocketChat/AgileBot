@@ -81,7 +81,6 @@ export async function getDirect(read: IRead, modify: IModify, appUser: IUser, us
 	} else {
 		let roomId: string;
 
-		// Create direct room between botUser and username
 		const newRoom = modify
 			.getCreator()
 			.startRoom()

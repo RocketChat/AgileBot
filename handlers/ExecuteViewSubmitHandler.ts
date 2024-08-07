@@ -59,7 +59,6 @@ export class ExecuteViewSubmitHandler {
 		const meetingTimeStr = view.state?.['meetingTime']['meetingTime'] || '';
 		const minutesBeforeStr = view.state?.['minutesBefore']['minutesBefore'] || '0';
 
-		// Validate meetingTimeStr
 		if (!/^\d{4}$/.test(meetingTimeStr)) {
 			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time format. Please use 24-hour format (HHMM).');
 			return {
@@ -72,7 +71,6 @@ export class ExecuteViewSubmitHandler {
 		const meetingHours = Math.floor(meetingTime / 100);
 		const meetingMinutes = meetingTime % 100;
 
-		// Validate hours and minutes
 		if (meetingHours < 0 || meetingHours > 23 || meetingMinutes < 0 || meetingMinutes > 59) {
 			await sendNotification(
 				this.read,
@@ -87,7 +85,6 @@ export class ExecuteViewSubmitHandler {
 			};
 		}
 
-		// Validate minutesBeforeStr
 		const minutesBefore = parseInt(minutesBeforeStr, 10);
 		if (isNaN(minutesBefore) || minutesBefore < 0) {
 			await sendNotification(
