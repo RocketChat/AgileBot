@@ -16,6 +16,7 @@ import { QuickPoll } from './commands/Poll';
 import { QuickPollProcessor } from './lib/processors/QuickPollProcessor';
 import { StartupType } from '@rocket.chat/apps-engine/definition/scheduler';
 import { StandupMessageProcessor } from './lib/processors/StandupMessageProcessor';
+import { DailyStandupProcessor } from './lib/processors/DailyStandupProcessor';
 
 export class AgileBotApp extends App {
 	constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
@@ -53,15 +54,18 @@ export class AgileBotApp extends App {
 
 		configuration.scheduler.registerProcessors([new MeetingReminderProcessor()]);
 		configuration.scheduler.registerProcessors([new QuickPollProcessor()]);
-        configuration.scheduler.registerProcessors([
-            {
-                id: 'standup-message-recurring',
-                processor: new StandupMessageProcessor().processor,
-                startupSetting: {
-                  type: StartupType.RECURRING,
-                  interval: '60 minutes',
-                }
-            },
-        ]);
+        configuration.scheduler.registerProcessors([new DailyStandupProcessor()]);
+
+		const standupProcessor = new StandupMessageProcessor();
+		configuration.scheduler.registerProcessors([
+			{
+				id: standupProcessor.id,
+				processor: standupProcessor.processor.bind(standupProcessor),
+				startupSetting: {
+					type: StartupType.RECURRING,
+					interval: '0 0 * * *',
+				},
+			},
+		]);
 	}
 }

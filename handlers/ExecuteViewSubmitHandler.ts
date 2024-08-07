@@ -2,9 +2,10 @@ import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/de
 import { UIKitViewSubmitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit';
 import { AgileBotApp } from '../AgileBotApp';
 import { sendNotification } from '../lib/Messages';
-import { storeOrUpdateData, removeAllData } from '../lib/PersistenceMethods';
+import { storeOrUpdateData, removeAllData, addRoomId, removeRoomId } from '../lib/PersistenceMethods';
 import { getRoom } from '../lib/RoomInteraction';
 import { Modals } from '../definitions/ModalsEnum';
+import { getRoomIds } from '../lib/PersistenceMethods';
 
 export class ExecuteViewSubmitHandler {
 	constructor(
@@ -73,7 +74,13 @@ export class ExecuteViewSubmitHandler {
 
 		// Validate hours and minutes
 		if (meetingHours < 0 || meetingHours > 23 || meetingMinutes < 0 || meetingMinutes > 59) {
-			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time. Hours must be between 00 and 23 and minutes between 00 and 59.');
+			await sendNotification(
+				this.read,
+				this.modify,
+				user,
+				room,
+				'Invalid meeting time. Hours must be between 00 and 23 and minutes between 00 and 59.',
+			);
 			return {
 				success: false,
 				error: 'Invalid meeting time. Hours must be between 00 and 23 and minutes between 00 and 59.',
@@ -83,7 +90,13 @@ export class ExecuteViewSubmitHandler {
 		// Validate minutesBeforeStr
 		const minutesBefore = parseInt(minutesBeforeStr, 10);
 		if (isNaN(minutesBefore) || minutesBefore < 0) {
-			await sendNotification(this.read, this.modify, user, room, 'Invalid "minutes before" value. It must be a non-negative integer.');
+			await sendNotification(
+				this.read,
+				this.modify,
+				user,
+				room,
+				'Invalid "minutes before" value. It must be a non-negative integer.',
+			);
 			return {
 				success: false,
 				error: 'Invalid "minutes before" value. It must be a non-negative integer.',
@@ -96,7 +109,6 @@ export class ExecuteViewSubmitHandler {
 
 		const timeLeft = Math.floor((meetingDate.getTime() - now.getTime()) / 1000 - minutesBefore * 60);
 
-		// Check if timeLeft is negative
 		if (timeLeft < 0) {
 			await sendNotification(this.read, this.modify, user, room, 'Invalid meeting time. The meeting time must be in the future.');
 			return {
@@ -141,10 +153,23 @@ export class ExecuteViewSubmitHandler {
 		const agileMessage = view.state?.['agileMessage']['agileMessage'] || '';
 		const selectDays = view.state?.['selectDays']['selectDays'] || '';
 		const time = view.state?.['agileTime']['agileTime'] || '';
+		const toggleChoice = view.state?.['agileToggle']['agileToggle'] || '';
 
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_message', agileMessage);
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_days', selectDays);
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_time', time);
+		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_toggle', toggleChoice);
+
+		if (toggleChoice === 'on') {
+			await addRoomId(this.persistence, this.read, room.id);
+			await sendNotification(this.read, this.modify, user, room, `Agile settings enabled for room: ${room.displayName}`);
+		} else if (toggleChoice === 'off') {
+			await removeRoomId(this.persistence, this.read, room.id);
+			await sendNotification(this.read, this.modify, user, room, `Agile settings disabled for room: ${room.displayName}`);
+		}
+
+		const storedRoomIds = await getRoomIds(this.read);
+		console.log('Stored rooms:', storedRoomIds);
 
 		await sendNotification(
 			this.read,

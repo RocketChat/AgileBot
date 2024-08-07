@@ -1,0 +1,10 @@
+{
+    "workbench.colorCustomizations": {
+        "list.activeSelectionForeground": "#ffffff",  // Text color of the selected item when the list is active
+        "list.inactiveSelectionForeground": "#ffffff", // Text color of the selected item when the list is inactive
+        "list.hoverForeground": "#ffffff",             // Text color of the item when hovering
+        "list.focusForeground": "#ffffff",             // Text color of the focused item
+        "list.foreground": "#ffffff"                   // General text color for list items
+    }
+
+}

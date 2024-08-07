@@ -29,6 +29,7 @@ export async function AgileModal({
 	let agileMessage = '';
 	let agileTime = '';
 	let agileDays: string[] = [];
+	let agileToggle = 'off';
 
 	if (user?.id) {
 		let roomId: string;
@@ -46,10 +47,39 @@ export async function AgileModal({
 			agileMessage = data[0].agile_message;
 			agileTime = data[0].agile_time;
 			agileDays = data[0].agile_days;
+			agileToggle = data[0].agile_toggle;
 		}
 	}
 
 	const blocks = modify.getCreator().getBlockBuilder();
+
+	blocks.addInputBlock({
+		label: {
+			text: t('agile_toggle_title'),
+			type: TextObjectType.PLAINTEXT,
+		},
+		element: blocks.newStaticSelectElement({
+			actionId: 'agileToggle',
+			initialValue: agileToggle ?? 'off',
+			options: [
+				{
+					value: 'on',
+					text: {
+						type: TextObjectType.PLAINTEXT,
+						text: 'On',
+					},
+				},
+				{
+					value: 'off',
+					text: {
+						type: TextObjectType.PLAINTEXT,
+						text: 'Off',
+					},
+				},
+			],
+		}),
+		blockId: 'agileToggle',
+	});
 
 	blocks.addInputBlock({
 		label: {
