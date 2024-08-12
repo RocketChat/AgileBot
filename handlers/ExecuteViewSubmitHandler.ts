@@ -114,7 +114,7 @@ export class ExecuteViewSubmitHandler {
 			};
 		}
 
-		const messageText = `Please join the meeting: ${meetingLink}\nTitle: ${meetingTitle}`;
+		const messageText = ` ## Meeting alert \n ${meetingTitle} \n\n Meeting link: ${meetingLink}`;
 
 		const task = {
 			id: 'meeting-reminder',
