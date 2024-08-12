@@ -20,11 +20,11 @@ export class ExecuteBlockActionHandler {
 	public async run(context: UIKitBlockInteractionContext): Promise<IUIKitResponse> {
 		const { actionId, user, value, room } = context.getInteractionData();
 
-        if (!room || !value){
-            return {
-                success: false,
-            };
-        }
+		if (!room || !value) {
+			return {
+				success: false,
+			};
+		}
 
 		switch (actionId) {
 			case Poll.PollYes:

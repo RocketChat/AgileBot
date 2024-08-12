@@ -20,4 +20,5 @@ export interface IAgileSettingsPersistenceData {
 	agile_message: string;
 	agile_time: string;
 	agile_days: string[];
+	agile_toggle: string;
 }

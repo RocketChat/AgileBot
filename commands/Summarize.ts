@@ -5,9 +5,9 @@ import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/def
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 
 export class SummarizeCommand implements ISlashCommand {
-	public command = 'summarize';
+	public command = 'agile-standup-summary';
 	public i18nParamsExample = 'Thread report for Agile';
-	public i18nDescription = '';
+	public i18nDescription = 'agile_bot_command_summary';
 	public providesPreview = false;
 
 	public async executor(context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp): Promise<void> {
@@ -17,8 +17,8 @@ export class SummarizeCommand implements ISlashCommand {
 		const threadId = context.getThreadId();
 
 		if (!threadId) {
-			await this.notifyMessage(room, read, context.getSender(), 'You can only call /summarize in a thread');
-			throw new Error('You can only call /summarize in a thread');
+			await this.notifyMessage(room, read, context.getSender(), 'You can only call /agile-standup-summary in a thread');
+			return;
 		}
 
 		const messages = await this.getThreadMessages(room, read, context.getSender(), threadId);
@@ -28,6 +28,7 @@ export class SummarizeCommand implements ISlashCommand {
 		const summary = await this.summarizeMessages(room, read, context.getSender(), http, messages, notPosted);
 
 		await this.sendMessage(room, summary, author ?? user, modify, threadId);
+		await this.sendNotPostedMessage(room, notPosted, author ?? user, modify, threadId);
 	}
 
 	private async summarizeMessages(
@@ -46,24 +47,19 @@ export class SummarizeCommand implements ISlashCommand {
 			messages: [
 				{
 					role: 'system',
-					content: `You are an assistant designed to help summarize daily updates from engineers. Follow this format:
-                
-                ### (Name of engineer)
-                [Leave one line]
+					content: `You are an assistant designed to help summarize daily updates from engineers BUT NOT FROM YOURSELF. Follow this format and ensure spacing between each engineer's entry:
+
+                ## (Name of engineer)
                     ** Progress **: [Brief summary of what was completed]
                     ** Blockers **: [Brief summary of any issues]
                     ** Next Steps **: [Brief summary of planned tasks]
 
-                Briefly summarize the following messages only, separated by double slashes (//): ${messages}
-                
-				Name the people who haven't posted an update as well, separated by double slashes: ${notPosted}
+                    Following are the messages of this thread separated by double slashes (//): ${messages}
 				`,
 				},
 			],
 			temperature: 0,
 		};
-
-		const reply = body + notPosted;
 
 		const response = await http.post(url + '/chat/completions', {
 			headers: {
@@ -128,6 +124,30 @@ export class SummarizeCommand implements ISlashCommand {
 	private async sendMessage(room: IRoom, textMessage: string, author: IUser, modify: IModify, threadId?: string): Promise<string> {
 		const messageBuilder = modify.getCreator().startMessage({
 			text: textMessage,
+		} as IMessage);
+		messageBuilder.setRoom(room);
+		messageBuilder.setSender(author);
+		if (threadId) {
+			messageBuilder.setThreadId(threadId);
+		}
+		return modify.getCreator().finish(messageBuilder);
+	}
+
+	private async sendNotPostedMessage(
+		room: IRoom,
+		textMessage: string,
+		author: IUser,
+		modify: IModify,
+		threadId?: string,
+	): Promise<string> {
+		let txt = '';
+		if (textMessage.length == 0) {
+			txt = 'Everyone posted an update!';
+		} else {
+			txt = `People who haven't posted an update: ${textMessage}`;
+		}
+		const messageBuilder = modify.getCreator().startMessage({
+			text: txt,
 		} as IMessage);
 		messageBuilder.setRoom(room);
 		messageBuilder.setSender(author);

@@ -5,7 +5,7 @@ import { CommandUtility } from '../lib/CommandUtility';
 
 export class MeetingReminder implements ISlashCommand {
 	public constructor(private readonly app: AgileBotApp) {}
-	public command = 'meeting-reminder';
+	public command = 'agile-meeting-reminder';
 	public i18nDescription = 'meeting_reminder_description';
 	public providesPreview = false;
 	public i18nParamsExample = '';
