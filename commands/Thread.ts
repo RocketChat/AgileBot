@@ -6,7 +6,7 @@ import { IAgileSettingsPersistenceData } from '../definitions/ExecutorProps';
 import { sendMessageToRoom } from '../lib/SendMessageToRoom';
 
 export class ThreadInit implements ISlashCommand {
-	public command = 'scrum';
+	public command = 'standup-thread';
 	public i18nParamsExample: string = 'agile_scrum_init';
 	public i18nDescription: string = 'agile_scrum_init_description';
 	public providesPreview: boolean = false;

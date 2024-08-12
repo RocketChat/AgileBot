@@ -28,6 +28,7 @@ export const en = {
 	time_argument_too_large: 'The time argument is too large. Please enter a smaller value (1 - 10000 minutes)',
 	agile_toggle_title: 'Select on or off',
 	agile_bot_command_summary: 'Agile Bot summarization command.',
+    agile_settings_description: 'Agile settings modal.',
 	yes: 'Yes',
 	no: 'No',
 };

@@ -5,7 +5,7 @@ import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/def
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 
 export class SummarizeCommand implements ISlashCommand {
-	public command = 'summarize';
+	public command = 'standup-summary';
 	public i18nParamsExample = 'Thread report for Agile';
 	public i18nDescription = 'agile_bot_command_summary';
 	public providesPreview = false;
@@ -17,8 +17,8 @@ export class SummarizeCommand implements ISlashCommand {
 		const threadId = context.getThreadId();
 
 		if (!threadId) {
-			await this.notifyMessage(room, read, context.getSender(), 'You can only call /summarize in a thread');
-			throw new Error('You can only call /summarize in a thread');
+			await this.notifyMessage(room, read, context.getSender(), 'You can only call /standup-summary in a thread');
+			return;
 		}
 
 		const messages = await this.getThreadMessages(room, read, context.getSender(), threadId);
@@ -47,22 +47,19 @@ export class SummarizeCommand implements ISlashCommand {
 			messages: [
 				{
 					role: 'system',
-					content: `You are an assistant designed to help summarize daily updates from engineers. Follow this format:
+					content: `You are an assistant designed to help summarize daily updates from engineers BUT NOT FROM YOURSELF. Follow this format and ensure spacing between each engineer's entry:
 
-                ### (Name of engineer)
-                [Leave one line]
+                ## (Name of engineer)
                     ** Progress **: [Brief summary of what was completed]
                     ** Blockers **: [Brief summary of any issues]
                     ** Next Steps **: [Brief summary of planned tasks]
 
-                Briefly summarize the following messages only, separated by double slashes (//): ${messages}
+                    Following are the messages of this thread separated by double slashes (//): ${messages}
 				`,
 				},
 			],
 			temperature: 0,
 		};
-
-		const reply = body + notPosted;
 
 		const response = await http.post(url + '/chat/completions', {
 			headers: {

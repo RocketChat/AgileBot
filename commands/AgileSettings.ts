@@ -6,7 +6,7 @@ import { CommandUtility } from '../lib/CommandUtility';
 export class AgileSettings implements ISlashCommand {
 	public constructor(private readonly app: AgileBotApp) {}
 	public command = 'agile-settings';
-	public i18nDescription = 'settings';
+	public i18nDescription = 'agile_settings_description';
 	public providesPreview = false;
 	public i18nParamsExample = '';
 

@@ -15,7 +15,6 @@ export class StandupMessageProcessor implements IProcessor {
         for (const roomId of roomIds) {
             const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.ROOM, roomId);
             const data = (await read.getPersistenceReader().readByAssociation(assoc)) as IAgileSettingsPersistenceData[];
-            const sender = await read.getUserReader().getAppUser();
 
             if (data && data.length > 0) {
                 const { agile_message, agile_time, agile_days } = data[0];
