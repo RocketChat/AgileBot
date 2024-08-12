@@ -8,7 +8,7 @@ import { generateUUID } from '../lib/GenerateUUID';
 import { t } from '../i18n/translation';
 
 export class QuickPoll implements ISlashCommand {
-	public command = 'quickpoll';
+	public command = 'agile-poll';
 	public i18nParamsExample: string = 'quick_poll_examples';
 	public i18nDescription: string = 'quick_poll_description';
 	public providesPreview: boolean = false;

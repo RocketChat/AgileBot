@@ -5,7 +5,7 @@ import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/def
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 
 export class SummarizeCommand implements ISlashCommand {
-	public command = 'standup-summary';
+	public command = 'agile-standup-summary';
 	public i18nParamsExample = 'Thread report for Agile';
 	public i18nDescription = 'agile_bot_command_summary';
 	public providesPreview = false;
@@ -17,7 +17,7 @@ export class SummarizeCommand implements ISlashCommand {
 		const threadId = context.getThreadId();
 
 		if (!threadId) {
-			await this.notifyMessage(room, read, context.getSender(), 'You can only call /standup-summary in a thread');
+			await this.notifyMessage(room, read, context.getSender(), 'You can only call /agile-standup-summary in a thread');
 			return;
 		}
 
