@@ -1,7 +1,7 @@
 {
-    "agile_settings_description": "Open agile settings modal.",
-    "quick_poll_description": "Create a quick poll. Format: /quickpoll [time in minutes] [your question]",
-    "meeting_reminder_description": "Create a meeting reminder.",
-    "agile_bot_command_summary": "Get standup summary of this thread.",
-    "agile_scrum_init_description": "Start a standup thread here."
+	"agile_settings_description": "Open agile settings modal.",
+	"quick_poll_description": "Create a quick poll. Format: /quickpoll [time in minutes] [your question]",
+	"meeting_reminder_description": "Create a meeting reminder.",
+	"agile_bot_command_summary": "Get standup summary of this thread.",
+	"agile_scrum_init_description": "Start a standup thread here."
 }

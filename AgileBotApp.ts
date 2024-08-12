@@ -54,7 +54,7 @@ export class AgileBotApp extends App {
 
 		configuration.scheduler.registerProcessors([new MeetingReminderProcessor()]);
 		configuration.scheduler.registerProcessors([new QuickPollProcessor()]);
-        configuration.scheduler.registerProcessors([new DailyStandupProcessor()]);
+		configuration.scheduler.registerProcessors([new DailyStandupProcessor()]);
 
 		const standupProcessor = new StandupMessageProcessor();
 		configuration.scheduler.registerProcessors([

@@ -2,7 +2,6 @@
  
 The AgileBot app automates a lot of your tasks as managers, and lets you focus on the things that are important. Automate standup threads, generate summary for standups to save time, schedule meetings in advance, make anonymous polls and more!
 
-
 <h2 align='center'>🚀 Features 🚀</h2>
 <ul>
   <li>Automatic standup threads: No more asking for updates every Monday and Friday!</li> 
@@ -22,7 +21,6 @@ The AgileBot app automates a lot of your tasks as managers, and lets you focus o
     <li><strong>Use the power of LLMs to generate a summary for the standup thread!→</strong> <code>/agile-standup-summary</code></li>
     <li><strong>Launch an anonymous poll with only Yes/No answers! Get detailed stats DMed to you by AgileBot! →</strong> <code>/agile-poll</code></li>
 </ul>
-
 
 <h2 align='center'>🚀 Contributing 🚀</h2>
 

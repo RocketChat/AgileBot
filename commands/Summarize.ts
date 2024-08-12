@@ -133,7 +133,13 @@ export class SummarizeCommand implements ISlashCommand {
 		return modify.getCreator().finish(messageBuilder);
 	}
 
-	private async sendNotPostedMessage(room: IRoom, textMessage: string, author: IUser, modify: IModify, threadId?: string): Promise<string> {
+	private async sendNotPostedMessage(
+		room: IRoom,
+		textMessage: string,
+		author: IUser,
+		modify: IModify,
+		threadId?: string,
+	): Promise<string> {
 		let txt = '';
 		if (textMessage.length == 0) {
 			txt = 'Everyone posted an update!';
