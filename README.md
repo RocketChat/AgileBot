@@ -45,10 +45,16 @@ The AgileBot app automates a lot of your tasks as managers, and lets you focus o
     git clone https://github.com/RocketChat/AgileBot.git
  ```
   
-  <li>Enter the AgileBot directory and install dependecies</li>
+  <li>Enter the AgileBot directory</li>
   
   ```
     cd AgileBot
+  ```
+
+  <li>Install the required dependencies</li>
+  
+  ```
+    npm install
   ```
   
   <li>In order to install Rocket.Chat Apps on your development server, the server must be in development mode. Enable Apps development mode by navigating to <i>Administration > General > Apps</i> and click on the True radio button over the Enable development mode..</li>
