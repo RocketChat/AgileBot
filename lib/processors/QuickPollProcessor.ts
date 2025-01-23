@@ -14,13 +14,13 @@ export class QuickPollProcessor implements IProcessor {
 		const assoc = new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, uuid);
 		const [pollData] = (await read.getPersistenceReader().readByAssociation(assoc)) as IPollData[];
 		if (!pollData) {
-			console.error(t('poll_with_uuid_not_found'));
+			console.error(t('poll_with_uuid_not_found', { uuid }));
 			return;
 		}
 
 		const room = await read.getRoomReader().getById(pollData.roomId);
 		if (!room) {
-			console.error(t('poll_with_room_not_found'));
+			console.error(t('poll_with_room_not_found', { pollData }));
 			return;
 		}
 
@@ -66,7 +66,7 @@ No (${noPercentage.toFixed(2)}%): ${pollData.responses.no.join(', ')}
 		if (creator) {
 			await sendDirectMessage(read, modify, creator, detailedStatsText, persis);
 		} else {
-			console.error(t('poll_creator_with_username_not_found'));
+			console.error(t('poll_creator_with_username_not_found', { pollData }));
 		}
 
 		await persis.removeByAssociation(assoc);
