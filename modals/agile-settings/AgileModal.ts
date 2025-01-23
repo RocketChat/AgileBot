@@ -92,7 +92,7 @@ export async function AgileModal({
 			initialValue: agileMessage,
 			placeholder: {
 				text: t('agile_message_placeholder'),
-				type: TextObjectType.PLAINTEXT,
+				type: TextObjectType.MARKDOWN,
 			},
 		}),
 		blockId: 'agileMessage',
