@@ -8,6 +8,7 @@ import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/Room
 import { Modals } from '../../definitions/ModalsEnum';
 import { t } from '../../i18n/translation';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { addColonToTime } from '../../lib/HandleTimeString';
 
 export async function AgileModal({
 	modify,
@@ -50,6 +51,9 @@ export async function AgileModal({
 			agileDays = data[0].agile_days;
 			agileToggle = data[0].agile_toggle;
 		}
+
+		const agileTimeTemp = addColonToTime(agileTime);
+		agileTime = agileTimeTemp;
 	}
 
 	return {
@@ -175,10 +179,10 @@ export async function AgileModal({
 					{
 						type: 'time_picker',
 						actionId: 'agileTime',
-						initialTime: agileTime || '00:00',
+						initialTime: agileTime || '10:00',
 						placeholder: {
 							type: 'plain_text',
-							text: 'Select time in 24-hour format',
+							text: 'Select time',
 						},
 						appId: app.id,
 						blockId: 'agileTime',

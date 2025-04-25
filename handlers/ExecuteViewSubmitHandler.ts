@@ -6,7 +6,7 @@ import { storeOrUpdateData, removeAllData, addRoomId, removeRoomId } from '../li
 import { getRoom } from '../lib/RoomInteraction';
 import { Modals } from '../definitions/ModalsEnum';
 import { getRoomIds } from '../lib/PersistenceMethods';
-import { removeColonFromTime } from '../lib/ValidateTimeString';
+import { removeColonFromTime } from '../lib/HandleTimeString';
 
 export class ExecuteViewSubmitHandler {
 	constructor(
