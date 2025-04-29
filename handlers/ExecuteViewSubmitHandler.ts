@@ -6,6 +6,7 @@ import { storeOrUpdateData, removeAllData, addRoomId, removeRoomId } from '../li
 import { getRoom } from '../lib/RoomInteraction';
 import { Modals } from '../definitions/ModalsEnum';
 import { getRoomIds } from '../lib/PersistenceMethods';
+import { removeColonFromTime } from '../lib/HandleTimeString';
 
 export class ExecuteViewSubmitHandler {
 	constructor(
@@ -152,9 +153,11 @@ export class ExecuteViewSubmitHandler {
 		const time = view.state?.['agileTime']['agileTime'] || '';
 		const toggleChoice = view.state?.['agileToggle']['agileToggle'] || '';
 
+		const validatedTime = removeColonFromTime(time);
+
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_message', agileMessage);
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_days', selectDays);
-		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_time', time);
+		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_time', validatedTime);
 		await storeOrUpdateData(this.persistence, this.read, room.id, 'agile_toggle', toggleChoice);
 
 		if (toggleChoice === 'on') {

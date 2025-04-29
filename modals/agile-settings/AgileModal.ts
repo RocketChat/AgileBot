@@ -2,12 +2,13 @@ import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/de
 import { SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
 import { UIKitInteractionContext } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionContext';
 import { IUIKitModalViewParam } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
-import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks';
 import { RocketChatAssociationRecord, RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata';
 import { IAgileSettingsPersistenceData } from '../../definitions/ExecutorProps';
 import { getInteractionRoomData, storeInteractionRoomData } from '../../lib/RoomInteraction';
 import { Modals } from '../../definitions/ModalsEnum';
 import { t } from '../../i18n/translation';
+import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { addColonToTime } from '../../lib/HandleTimeString';
 
 export async function AgileModal({
 	modify,
@@ -23,6 +24,7 @@ export async function AgileModal({
 	slashCommandContext?: SlashCommandContext;
 	uiKitContext?: UIKitInteractionContext;
 }): Promise<IUIKitModalViewParam> {
+	const app = (await read.getUserReader().getAppUser()) as IUser;
 	const room = slashCommandContext?.getRoom() || uiKitContext?.getInteractionData().room;
 	const user = slashCommandContext?.getSender() || uiKitContext?.getInteractionData().user;
 
@@ -49,147 +51,144 @@ export async function AgileModal({
 			agileDays = data[0].agile_days;
 			agileToggle = data[0].agile_toggle;
 		}
+
+		const agileTimeTemp = addColonToTime(agileTime);
+		agileTime = agileTimeTemp;
 	}
-
-	const blocks = modify.getCreator().getBlockBuilder();
-
-	blocks.addInputBlock({
-		label: {
-			text: t('agile_toggle_title'),
-			type: TextObjectType.PLAINTEXT,
-		},
-		element: blocks.newStaticSelectElement({
-			actionId: 'agileToggle',
-			initialValue: agileToggle ?? 'off',
-			options: [
-				{
-					value: 'on',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'On',
-					},
-				},
-				{
-					value: 'off',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Off',
-					},
-				},
-			],
-		}),
-		blockId: 'agileToggle',
-	});
-
-	blocks.addInputBlock({
-		label: {
-			text: t('agile_message_title'),
-			type: TextObjectType.PLAINTEXT,
-		},
-		element: blocks.newPlainTextInputElement({
-			actionId: 'agileMessage',
-			multiline: true,
-			initialValue: agileMessage,
-			placeholder: {
-				text: t('agile_message_placeholder'),
-				type: TextObjectType.PLAINTEXT,
-			},
-		}),
-		blockId: 'agileMessage',
-	});
-
-	blocks.addInputBlock({
-		label: {
-			text: t('agile_select_days_title'),
-			type: TextObjectType.PLAINTEXT,
-		},
-		element: blocks.newMultiStaticElement({
-			actionId: 'selectDays',
-			initialValue: agileDays,
-			options: [
-				{
-					value: 'monday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Monday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'tuesday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Tuesday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'wednesday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Wednesday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'thursday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Thursday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'friday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Friday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'saturday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Saturday',
-						emoji: true,
-					},
-				},
-				{
-					value: 'sunday',
-					text: {
-						type: TextObjectType.PLAINTEXT,
-						text: 'Sunday',
-						emoji: true,
-					},
-				},
-			],
-		}),
-		blockId: 'selectDays',
-	});
-
-	blocks.addInputBlock({
-		label: {
-			text: t('agile_time_title'),
-			type: TextObjectType.PLAINTEXT,
-		},
-		element: blocks.newPlainTextInputElement({
-			actionId: 'agileTime',
-			initialValue: agileTime,
-			placeholder: {
-				text: '24-hour format',
-				type: TextObjectType.PLAINTEXT,
-			},
-		}),
-		blockId: 'agileTime',
-	});
 
 	return {
 		id: Modals.AgileSettings,
-		title: blocks.newPlainTextObject(t('agile_modal_title')),
-		submit: blocks.newButtonElement({
-			text: blocks.newPlainTextObject(t('submit')),
-		}),
-		blocks: blocks.getBlocks(),
+		title: { type: 'plain_text', text: t('agile_modal_title') },
+		submit: {
+			type: 'button',
+			text: { type: 'plain_text', text: t('submit') },
+			actionId: 'submit_agile_config',
+			blockId: 'agile_config_submit',
+			appId: app.id
+		},
+		blocks: [
+			{
+				type: 'section',
+				text: {
+					type: 'plain_text',
+					text: t('agile_toggle_title')
+				}
+			},
+			{
+				type: 'actions',
+				blockId: 'agileToggle',
+				elements: [
+					{
+						type: 'radio_button',
+						actionId: 'agileToggle',
+						appId: app.id,
+						blockId: 'agileToggle',
+						options: [
+							{
+								text: { type: 'plain_text', text: 'On' },
+								value: 'on'
+							},
+							{
+								text: { type: 'plain_text', text: 'Off' },
+								value: 'off'
+							}
+						],
+						initialOption: agileToggle === 'on' ? 
+							{ text: { type: 'plain_text', text: 'On' }, value: 'on' } : 
+							{ text: { type: 'plain_text', text: 'Off' }, value: 'off' }
+					}
+				]
+			},
+			{
+				type: 'input',
+				label: {
+					type: 'plain_text',
+					text: t('agile_message_title'),
+				},
+				element: {
+					type: 'plain_text_input',
+					appId: app.id,
+					actionId: 'agileMessage',
+					blockId: 'agileMessage',
+					initialValue: agileMessage,
+					placeholder: {
+						type: 'plain_text',
+						text: t('agile_message_placeholder'),
+					},
+					multiline: true,
+				},
+			},
+			{
+				type: 'input',
+				label: {
+					type: 'plain_text',
+					text: t('agile_select_days_title'),
+				},
+				element: {
+					type: 'multi_static_select',
+					appId: app.id,
+					actionId: 'selectDays',
+					blockId: 'selectDays',
+					initialValue: agileDays,
+					options: [
+						{
+							text: { type: 'plain_text', text: 'Monday', emoji: true },
+							value: 'monday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Tuesday', emoji: true },
+							value: 'tuesday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Wednesday', emoji: true },
+							value: 'wednesday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Thursday', emoji: true },
+							value: 'thursday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Friday', emoji: true },
+							value: 'friday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Saturday', emoji: true },
+							value: 'saturday'
+						},
+						{
+							text: { type: 'plain_text', text: 'Sunday', emoji: true },
+							value: 'sunday'
+						}
+					],
+					placeholder: {
+						type: 'plain_text',
+						text: 'Select days'
+					}
+				}
+			},
+			{
+				type: 'section',
+				text: {
+					type: 'plain_text',
+					text: t('agile_time_title')
+				}
+			},
+			{
+				type: 'actions',
+				elements: [
+					{
+						type: 'time_picker',
+						actionId: 'agileTime',
+						initialTime: agileTime || '10:00',
+						placeholder: {
+							type: 'plain_text',
+							text: 'Select time',
+						},
+						appId: app.id,
+						blockId: 'agileTime',
+					},
+				],
+			},
+		],
 	};
 }
