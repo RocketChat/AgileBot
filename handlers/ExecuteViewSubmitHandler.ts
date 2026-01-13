@@ -123,7 +123,7 @@ export class ExecuteViewSubmitHandler {
 			};
 		}
 
-		const messageText = ` ## Meeting alert \n ${meetingTitle} \n\n Meeting link: ${meetingLink}`;
+		const messageText = `### Meeting alert \n ${meetingTitle} \n\n Meeting link: ${meetingLink}`;
 
 		const task = {
 			id: 'meeting-reminder',
